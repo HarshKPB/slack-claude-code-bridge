@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.harsh.claude-slack-bot</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/.venv/bin/python</string>
+        <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/bot.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot</string>
+
+    <!-- ensure `claude` CLI on PATH for the Agent SDK -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/harshkhandelwal/.local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/bot.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/bot.log</string>
+</dict>
+</plist>
