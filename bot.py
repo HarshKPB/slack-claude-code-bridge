@@ -41,8 +41,15 @@ SCOPE_GUARD = (
     "single response. Do NOT launch multi-agent workflows, audits, or "
     "long-running research pipelines unless the user explicitly says 'deep "
     "research', 'full audit', or similar. If a task genuinely needs a long "
-    "run, say so first and ask for confirmation before starting. Keep replies "
-    "Slack-friendly: short paragraphs, lead with the answer."
+    "run, say so first and ask for confirmation before starting. "
+    "\n\nFORMAT FOR SLACK (mrkdwn, NOT GitHub Markdown):\n"
+    "- Bold uses single asterisks: *bold*. Never use **double**.\n"
+    "- Italic: _text_. Strike: ~text~. Inline code: `code`.\n"
+    "- NO Markdown tables (pipes |---| render as raw text in Slack). "
+    "Present tabular data as a numbered or bulleted list instead, e.g. "
+    "`1. *Zomato* - 2M+ IG, meme-native`.\n"
+    "- Bullets: use a leading '- ' or '• '. No '#' headings (use *bold* lines).\n"
+    "- Keep it short, lead with the answer."
 )
 
 app = App(token=BOT_TOKEN)
