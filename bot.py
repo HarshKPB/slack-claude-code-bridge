@@ -33,6 +33,18 @@ MODEL = os.environ.get("CLAUDE_MODEL") or None
 
 SLACK_LIMIT = 2900  # safe chunk size under Slack's 3000-char block limit
 
+# Keep replies proportional to the ask: don't blow a quick question into a
+# heavy multi-agent pipeline. Replies land in Slack, so stay concise.
+SCOPE_GUARD = (
+    "You are answering inside a Slack thread. Match effort to the request. "
+    "By default, answer directly and concisely from your own knowledge in a "
+    "single response. Do NOT launch multi-agent workflows, audits, or "
+    "long-running research pipelines unless the user explicitly says 'deep "
+    "research', 'full audit', or similar. If a task genuinely needs a long "
+    "run, say so first and ask for confirmation before starting. Keep replies "
+    "Slack-friendly: short paragraphs, lead with the answer."
+)
+
 app = App(token=BOT_TOKEN)
 
 # Per-channel state: last session id (for resume) and current working dir.
@@ -65,6 +77,8 @@ async def run_claude(prompt: str, channel: str) -> tuple[str, float]:
         model=MODEL,
         # load real Claude Code config: global CLAUDE.md, skills, MCP servers, settings
         setting_sources=["user", "project", "local"],
+        # keep Claude Code default prompt, append scope guard
+        system_prompt={"type": "preset", "preset": "claude_code", "append": SCOPE_GUARD},
     )
     final = ""
     cost = 0.0
