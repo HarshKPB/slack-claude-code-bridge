@@ -72,6 +72,13 @@ SCOPE_GUARD = (
     "`1. *Zomato* - 2M+ IG, meme-native`.\n"
     "- Bullets: use a leading '- ' or '• '. No '#' headings (use *bold* lines).\n"
     "- Keep it short, lead with the answer."
+    "\n\nSENDING FILES TO SLACK:\n"
+    "When the user asks for a file, document, pdf, docx, image, report, etc. "
+    "(e.g. 'share the pdf', 'send me the file', 'I want to view it on my phone'), "
+    "do NOT suggest AirDrop or just give the path. Output a line by itself:\n"
+    "SLACK_UPLOAD: <absolute_path>\n"
+    "The bridge uploads that file directly into this Slack thread. One line per "
+    "file. You may add a short sentence before it. Always use the absolute path."
 )
 
 app = App(token=BOT_TOKEN)
@@ -84,6 +91,7 @@ channel_tasks: dict[str, asyncio.Task] = {}   # channel -> in-flight run (for ca
 
 MENTION_RE = re.compile(r"<@[A-Z0-9]+>")
 CD_RE = re.compile(r"^\s*cd\s+(\S+)\s*\n?", re.IGNORECASE)
+UPLOAD_RE = re.compile(r"^\s*SLACK_UPLOAD:\s*(.+?)\s*$", re.MULTILINE)
 
 # --- dedicated asyncio loop in a background thread ----------------------------
 # Bolt listeners are sync; Claude work + heartbeat + cancel live on this loop.
@@ -112,8 +120,37 @@ def get_lock(channel: str) -> asyncio.Lock:
     return lock
 
 
+def handle_uploads(text, channel, thread_ts, say, client):
+    """Upload any files the model requested via 'SLACK_UPLOAD: <path>'.
+
+    Returns the text with those directive lines removed.
+    """
+    paths = UPLOAD_RE.findall(text)
+    for raw in paths:
+        path = os.path.expanduser(raw.strip())
+        if not os.path.isfile(path):
+            say(text=f":x: Can't upload, file not found: `{path}`", thread_ts=thread_ts)
+            continue
+        try:
+            client.files_upload_v2(
+                channel=channel,
+                thread_ts=thread_ts,
+                file=path,
+                title=os.path.basename(path),
+            )
+        except Exception as e:
+            log.warning("file upload '%s' failed: %s", path, e)
+            say(text=f":x: Upload failed for `{os.path.basename(path)}`: `{e}`",
+                thread_ts=thread_ts)
+    return UPLOAD_RE.sub("", text).strip()
+
+
 def deliver(text, channel, thread_ts, say, client):
     """Post the result. Short -> text; medium -> chunks; long -> .md upload."""
+    # First handle explicit file-send directives, then post remaining text.
+    text = handle_uploads(text, channel, thread_ts, say, client)
+    if not text:
+        return
     if len(text) <= SLACK_LIMIT:
         say(text=text, thread_ts=thread_ts)
         return
