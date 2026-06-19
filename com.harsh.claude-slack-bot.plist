@@ -22,6 +22,9 @@
         <string>/Users/harshkhandelwal/.local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
         <key>PYTHONUNBUFFERED</key>
         <string>1</string>
+        <!-- no time ceiling on background tasks: long research runs to completion -->
+        <key>CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS</key>
+        <string>0</string>
     </dict>
 
     <key>RunAtLoad</key>
