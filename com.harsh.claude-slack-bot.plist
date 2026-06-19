@@ -6,8 +6,12 @@
     <key>Label</key>
     <string>com.harsh.claude-slack-bot</string>
 
+    <!-- caffeinate keeps the Mac awake (no idle/system sleep) while the bot
+         runs, so it stays reachable from your phone with the lid open. -->
     <key>ProgramArguments</key>
     <array>
+        <string>/usr/bin/caffeinate</string>
+        <string>-is</string>
         <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/.venv/bin/python</string>
         <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/bot.py</string>
     </array>
