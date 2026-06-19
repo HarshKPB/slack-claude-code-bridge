@@ -32,9 +32,11 @@
     <key>KeepAlive</key>
     <true/>
 
+    <!-- bot.log is owned by the app's rotating logger; launchd captures only
+         crash/startup output here so the two never fight over one file -->
     <key>StandardOutPath</key>
-    <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/bot.log</string>
+    <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/bot.startup.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/bot.log</string>
+    <string>/Users/harshkhandelwal/Desktop/MISC/slack-claude-bot/bot.startup.log</string>
 </dict>
 </plist>
